@@ -66,3 +66,13 @@ func chunk(n int) []uint8 {
 	}
 	return c
 }
+
+type pack struct{ UniqueKey, SortKey, Vector []uint8 }
+
+func data(uk, sk, vk int) pack {
+	return pack{
+		UniqueKey: chunk(uk),
+		SortKey:   chunk(sk),
+		Vector:    chunk(vk),
+	}
+}

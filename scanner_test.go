@@ -21,15 +21,13 @@ func TestScanner(t *testing.T) {
 	for _, szData := range sizes {
 		for _, szUniqueKey := range sizes {
 			for _, szSortKey := range sizes {
-				uniqueKey := chunk(szUniqueKey)
-				sortKey := chunk(szSortKey)
-				vector := chunk(szData)
+				input := data(szUniqueKey, szSortKey, szData)
 
 				b := &bytes.Buffer{}
 				w := wreck.NewWriter[uint8](b)
 				r := wreck.NewScanner[uint8](b)
 
-				if err := w.Write(uniqueKey, sortKey, vector); err != nil {
+				if err := w.Write(input.UniqueKey, input.SortKey, input.Vector); err != nil {
 					t.Errorf("unable to encode chunk: %v", err)
 				}
 
@@ -40,15 +38,15 @@ func TestScanner(t *testing.T) {
 					t.Errorf("unable to decode chunk: %v", err)
 				}
 
-				if !bytes.Equal(uniqueKey, r.UniqueKey()) {
+				if !bytes.Equal(input.UniqueKey, r.UniqueKey()) {
 					t.Errorf("unique key is corrupted")
 				}
 
-				if !bytes.Equal(sortKey, r.SortKey()) {
+				if !bytes.Equal(input.SortKey, r.SortKey()) {
 					t.Errorf("sort key is corrupted")
 				}
 
-				if !bytes.Equal(vector, r.Vector()) {
+				if !bytes.Equal(input.Vector, r.Vector()) {
 					t.Errorf("data key is corrupted")
 				}
 			}

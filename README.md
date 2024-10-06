@@ -2,6 +2,7 @@
 
 Wreck is a binary format for efficient streaming, storing and exchanging "vectors" that maximizes efficiency and minimizes overhead. The format annotates "vectors" with unique and sort keys making it possible to store and lookup without doing a full deserialization. 
 
+
 ## Principles
 
 **Compactness**: Aim to minimize the size of the serialized data. This involves using efficient encoding schemes, and minimizing metadata overhead.
@@ -18,7 +19,7 @@ The format simplify the implementation through establishing dependencies to exte
 
 **Integrity**: Use external streaming error detection and error correction schemas.
 
-**Compression**: Use external compression.
+**Compression**: Use external compression. The nature of the data does not allowing extreme gains with compression. Gzip saves only 16% with best compression.
 
 ## Format
 
@@ -32,6 +33,7 @@ The format simplify the implementation through establishing dependencies to exte
 // 0xXX : 1 byte *   | Unique Key
 //
 ```
+
 
 ## Getting started
 
@@ -70,6 +72,20 @@ if err := r.Err(); err != nil {
   // ...
 }
 ```
+
+### Use-cases
+
+* Large vector streams
+  - Output `Writer[T any]`
+  - Input `Scanner[T any]`
+* Batching vectors, using JSON as primary protocol
+  - On-the-wire protocol encoding/decoding with `WriterJSON` and `ReaderJSON`
+  - Output `Writer[T any]`
+  - Input `Scanner[T any]` 
+* Transmitting one vector in the packet
+  - Output `Encoder[T any]`
+  - Input `Decoder[T any]`
+
 
 ## How To Contribute
 
