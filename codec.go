@@ -70,11 +70,14 @@ func Decode(r io.Reader, wreck *Chunk) error {
 	szUniqueKey := szWreck - szData - szSortKey
 
 	b := make([]uint8, szWreck)
-	if _, err := io.ReadFull(r, b); err != nil {
+	if n, err := io.ReadFull(r, b); err != nil {
 		if !errors.Is(err, io.EOF) {
 			return err
 		}
-		return io.ErrUnexpectedEOF
+
+		if n != szWreck {
+			return io.ErrUnexpectedEOF
+		}
 	}
 
 	if szData == 0 {
