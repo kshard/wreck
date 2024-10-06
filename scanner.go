@@ -131,7 +131,7 @@ func (codec *Decoder[T]) Decode(pack []byte, uniqueKey, sortKey *[]uint8, vec *[
 	}
 
 	*uniqueKey, *sortKey, *vec, err = codec.decode(&chunk)
-	return nil
+	return
 }
 
 //------------------------------------------------------------------------------
