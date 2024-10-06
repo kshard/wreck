@@ -21,9 +21,13 @@ import (
 type WriterJSON []io.WriteCloser
 
 // Create output stream for of vectors to be used as [json.RawMessage].
-func NewWriterJSON(w io.Writer) io.WriteCloser {
+func NewWriterJSON(w io.Writer, withGzip bool) io.WriteCloser {
 	q := newQuoter(w)
 	b := base64.NewEncoder(base64.StdEncoding, q)
+	if !withGzip {
+		return WriterJSON{b, q}
+	}
+
 	z := gzip.NewWriter(b)
 
 	return WriterJSON{z, b, q}
@@ -43,13 +47,17 @@ func (w WriterJSON) Write(p []byte) (n int, err error) {
 }
 
 // Create input stream to read vectors from [json.RawMessage].
-func NewReaderJSON(r io.Reader) (io.Reader, error) {
+func NewReaderJSON(r io.Reader, withGzip bool) (io.Reader, error) {
 	q, err := newUnQuote(r)
 	if err != nil {
 		return nil, err
 	}
 
 	b := base64.NewDecoder(base64.StdEncoding, q)
+	if !withGzip {
+		return b, nil
+	}
+
 	z, err := gzip.NewReader(b)
 	if err != nil {
 		return nil, err
